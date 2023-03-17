@@ -13,6 +13,10 @@ from tensorflow.keras.models import load_model
 app = Flask(__name__)
 cap = cv2.VideoCapture(0)
 
+# change size of showing window
+cap.set(cv2.CAP_PROP_FRAME_WIDTH, 800)
+cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 600)
+
 mp_holistic = mp.solutions.holistic
 mp_drawing = mp.solutions.drawing_utils
 
@@ -72,7 +76,7 @@ no_sequences = 30
 # Videos are going to be 30 frames in length
 sequence_length = 30
 
-colors = [(245, 117, 16), (117, 245, 16), (16, 117, 245)]
+colors = [(245,117,16), (255,153,204), (16,117,245)]
 
 
 def prob_viz(res, actions, input_frame, colors):
@@ -105,10 +109,10 @@ def generate_frames():
 
                     # Make detections
                     image, results = detection(frame, holistic)
-                    print(results)
+                    #print(results)
 
                     # Draw landmarks
-                    print("draw land")
+                    #print("draw land")
                     style_of_landmarks(image, results)
 
                     # 2. Prediction logic
@@ -136,9 +140,9 @@ def generate_frames():
                         # Viz probabilities
                         image = prob_viz(res, actions, image, colors)
 
-                    cv2.rectangle(image, (0, 0), (640, 40), (245, 117, 16), -1)
-                    cv2.putText(image, ' '.join(sentence), (3, 30),
-                                cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
+#                    cv2.rectangle(image, (0, 0), (640, 40), (245, 117, 16), -1)
+#                    cv2.putText(image, ' '.join(sentence), (3, 30),
+#                                cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
 
                     ret, buffer = cv2.imencode('.jpg', image)
                     frame = buffer.tobytes()
@@ -150,12 +154,9 @@ def generate_frames():
                 cap.release()
 
 
-
-
 @app.route('/')
 def index():
     return render_template('index.html')
-
 
 @app.route('/video')
 def video():
