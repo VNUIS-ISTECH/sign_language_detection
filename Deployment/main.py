@@ -1,4 +1,4 @@
-from flask import Flask, render_template, Response
+from flask import Flask, render_template, Response, url_for
 import cv2
 import os
 from matplotlib import pyplot as plt
@@ -39,16 +39,16 @@ def style_of_landmarks(image, results):
     #                       mp_drawing.DrawingSpec(color=(80,50,10),thickness=1, circle_radius=1))
     # draw pose connections
     mp_drawing.draw_landmarks(image, results.pose_landmarks, mp_holistic.POSE_CONNECTIONS,
-                              mp_drawing.DrawingSpec(color=(80, 110, 10), thickness=1, circle_radius=1),
-                              mp_drawing.DrawingSpec(color=(80, 110, 10), thickness=1, circle_radius=1))
+                                mp_drawing.DrawingSpec(color=(80, 110, 10), thickness=1, circle_radius=1),
+                                mp_drawing.DrawingSpec(color=(80, 110, 10), thickness=1, circle_radius=1))
     # draw left connections
     mp_drawing.draw_landmarks(image, results.left_hand_landmarks, mp_holistic.HAND_CONNECTIONS,
-                              mp_drawing.DrawingSpec(color=(80, 110, 10), thickness=1, circle_radius=1),
-                              mp_drawing.DrawingSpec(color=(80, 110, 10), thickness=1, circle_radius=1))
+                                mp_drawing.DrawingSpec(color=(80, 110, 10), thickness=1, circle_radius=1),
+                                mp_drawing.DrawingSpec(color=(80, 110, 10), thickness=1, circle_radius=1))
     # draw right connections
     mp_drawing.draw_landmarks(image, results.right_hand_landmarks, mp_holistic.HAND_CONNECTIONS,
-                              mp_drawing.DrawingSpec(color=(80, 110, 10), thickness=1, circle_radius=1),
-                              mp_drawing.DrawingSpec(color=(80, 110, 10), thickness=1, circle_radius=1))
+                                mp_drawing.DrawingSpec(color=(80, 110, 10), thickness=1, circle_radius=1),
+                                mp_drawing.DrawingSpec(color=(80, 110, 10), thickness=1, circle_radius=1))
 
 def extract_key_points(results):
     # take all marks possitions
@@ -143,7 +143,7 @@ def generate_frames():
                     ret, buffer = cv2.imencode('.jpg', image)
                     frame = buffer.tobytes()
                     yield (b'--frame\r\n'
-                           b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+                            b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
                     # Break gracefully
                     if cv2.waitKey(10) & 0xFF == ord('q'):
                         break
@@ -154,12 +154,16 @@ def generate_frames():
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return render_template('base.html')
 
 
 @app.route('/video')
 def video():
     return Response(generate_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
+
+# @app.route('/')
+# def home():
+#     return render_template('test.html')
 
 
 if __name__ == "__main__":
