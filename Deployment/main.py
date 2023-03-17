@@ -91,10 +91,14 @@ def prob_viz(res, actions, input_frame, colors):
 
 def generate_frames():
     while True:
-
+        # input button
+        # when input == "break"
+        # break the loop in def generate_frames
+        # go back to the loop in __main__
+        button = input()
         ## read the camera frame
         success, frame = cap.read()
-        if not success:
+        if button == "break":
             break
         else:
             model = load_model('action.h5')
@@ -164,4 +168,9 @@ def video():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    while True:
+        # run underground
+        # watting for input
+        button = input()
+        if button == True:
+            app.run(debug=True)
