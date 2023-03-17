@@ -1,4 +1,4 @@
-from flask import Flask, render_template, Response, url_for
+from flask import Flask, render_template, Response, request, url_for
 import cv2
 import os
 from matplotlib import pyplot as plt
@@ -12,6 +12,9 @@ from tensorflow.keras.models import load_model
 
 app = Flask(__name__)
 cap = cv2.VideoCapture(0)
+
+global switch
+switch = 1
 
 mp_holistic = mp.solutions.holistic
 mp_drawing = mp.solutions.drawing_utils
@@ -156,15 +159,33 @@ def generate_frames():
 def index():
     return render_template('base.html')
 
-
 @app.route('/video')
 def video():
     return Response(generate_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
-# @app.route('/')
-# def home():
-#     return render_template('test.html')
+@app.route('/requests',methods=['POST','GET'])
+def tasks():
+    global switch,cap
+    if request.method == 'POST':
+        
+        if  request.form.get('stop') == 'Stop/Start':
+            
+            if(switch==1):
+                switch=0
+                cap.release()
+                cv2.destroyAllWindows()
+                
+            else:
+                cap = cv2.VideoCapture(0)
+                switch=1
+    elif request.method=='GET':
+        return render_template('base.html')
+    return render_template('base.html')
 
 
 if __name__ == "__main__":
     app.run(debug=True)
+
+
+cap.release()
+cv2.destroyAllWindows()
